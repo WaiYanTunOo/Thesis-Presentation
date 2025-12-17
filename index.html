@@ -6,26 +6,24 @@
     <title>Connecting the Dots: Euler's Functions & AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- MATHJAX CONFIGURATION -->
+    <!-- MATHJAX CONFIGURATION (SVG for perfect sharpness) -->
     <script>
     window.MathJax = {
+      loader: { load: ['[tex]/ams'] },
       tex: {
+        packages: {'[+]': ['ams']},
         inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true,
-        packages: {'[+]': ['ams']}
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
       },
-      options: {
-        ignoreHtmlClass: 'tex2jax_ignore',
-        processHtmlClass: 'tex2jax_process'
-      },
-      loader: {load: ['[tex]/ams']}
+      svg: {
+        fontCache: 'global'
+      }
     };
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     
     <style>
 /* THEME: Thesis / Academic (Light Mode) */
@@ -35,7 +33,7 @@
     --accent-primary: #1e3a8a; /* Academic Navy Blue */
     --accent-secondary: #b45309; /* Muted Gold/Amber */
     --card-bg: #f8fafc; /* Slate 50 */
-    --border-color: #cbd5e1; /* Slate 300 */
+    --border-color: #e2e8f0; /* Slate 200 */
 }
 
 * { box-sizing: border-box; }
@@ -50,71 +48,125 @@ body {
     padding: 40px 0;
     font-family: 'Inter', sans-serif;
     -webkit-print-color-adjust: exact;
+    color: var(--text-color);
 }
 
-/* Floating Export Button */
-.export-btn {
+/* Control Panel */
+.controls {
     position: fixed;
     bottom: 30px;
     right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 2000;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    transition: opacity 0.3s;
+}
+
+.slide-counter {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-right: 10px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.btn {
     background: var(--accent-primary);
     color: #fff;
-    padding: 15px 30px;
+    padding: 10px 20px;
     border-radius: 50px;
-    font-weight: bold;
-    font-size: 18px;
+    font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     border: none;
-    z-index: 1000;
-    transition: transform 0.2s;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-.export-btn:hover { transform: scale(1.05); }
+.btn:hover { transform: translateY(-2px); background: #172554; }
+.btn-secondary { background: var(--accent-secondary); }
 
-/* Slide Container - 16:9 Aspect Ratio Fixed */
+/* Slide Container */
 .slide-container {
     background-color: var(--bg-color);
     color: var(--text-color);
-    border: 1px solid #ccc;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    height: 720px;
     width: 1280px;
+    height: 720px;
+    aspect-ratio: 16 / 9;
     justify-content: center;
     overflow: hidden;
     padding: 60px;
     position: relative;
     page-break-after: always;
     break-after: page;
+    transform-origin: center center;
+    transition: transform 0.3s ease;
+}
+
+/* PRESENTATION MODE */
+body.present-mode {
+    background: #000;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+}
+body.present-mode .slide-container {
+    display: none; 
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+}
+body.present-mode .slide-container.active {
+    display: flex; 
+}
+body.present-mode .controls {
+    opacity: 0;
+    bottom: 20px;
+}
+body.present-mode:hover .controls { opacity: 1; }
+
+/* Responsive Scaling */
+@media screen and (max-width: 1300px) {
+    .slide-container {
+        width: 95vw;
+        height: auto;
+        aspect-ratio: 16/9;
+        padding: 3vw;
+    }
+    h1 { font-size: 5vw; margin-bottom: 1vw; }
+    h2 { font-size: 4vw; margin-bottom: 1.5vw; }
+    h3 { font-size: 2.8vw; margin-bottom: 1vw; }
+    p, li, td, th { font-size: 2vw; line-height: 1.5; }
+    .slide-title { font-size: 4vw; padding-bottom: 1vw; margin-bottom: 2vw; border-bottom-width: 0.5vw; }
+    .image-wrapper { max-height: 40vw; }
 }
 
 /* PRINT STYLES */
 @media print {
-    body {
-        margin: 0;
-        padding: 0;
-        background: none;
-        display: block;
-    }
-    .slide-container {
-        margin: 0;
-        border: none;
-        box-shadow: none;
-        page-break-after: always;
-        break-after: page;
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-    }
-    .export-btn { display: none; }
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
+    body { margin: 0; padding: 0; background: none; display: block; }
+    .slide-container { margin: 0; border: none; box-shadow: none; page-break-after: always; break-after: page; width: 100vw; height: 100vh; border-radius: 0; }
+    .controls { display: none; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
 
-/* Header Decoration */
+/* Styles */
 .slide-container::before {
     content: '';
     position: absolute;
@@ -123,13 +175,19 @@ body {
     background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
     z-index: 0;
 }
-
+.slide-container::after {
+    content: 'Wai Yan Tun Oo | Capstone 2025';
+    position: absolute;
+    bottom: 20px; right: 30px;
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
 .slide-container > * { z-index: 1; position: relative; }
 
-/* Typography */
 h1, h2, h3, .slide-title { font-family: 'Playfair Display', serif; color: var(--accent-primary); margin: 0; }
-h1 { font-size: 72px; line-height: 1.1; margin-bottom: 20px; }
-h2 { font-size: 48px; margin-bottom: 30px; }
+h1 { font-size: 64px; line-height: 1.1; margin-bottom: 20px; }
+h2 { font-size: 42px; margin-bottom: 30px; }
 h3 { font-size: 28px; font-weight: 700; color: var(--text-color); margin-bottom: 15px; }
 p, li, td, th { font-family: 'Inter', sans-serif; font-size: 22px; line-height: 1.6; color: #334155; }
 
@@ -141,18 +199,16 @@ p, li, td, th { font-family: 'Inter', sans-serif; font-size: 22px; line-height: 
     width: 100%;
 }
 
-/* Layouts */
 .title-layout h1 { text-align: center; color: var(--accent-primary); }
 .subtitle { font-size: 24px; color: var(--accent-secondary); text-align: center; max-width: 800px; margin: 0 auto; font-style: italic; }
 .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; height: 100%; align-items: center; }
-.two-column.tiled > div { background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 4px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.two-column.tiled > div { background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 8px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
 
-/* Images & Wrappers */
 .image-wrapper {
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     height: 100%;
     max-height: 500px;
     width: 100%;
@@ -164,52 +220,83 @@ p, li, td, th { font-family: 'Inter', sans-serif; font-size: 22px; line-height: 
 }
 .image-wrapper img { width: 100%; height: 100%; object-fit: contain; }
 
-/* Bleed Layout */
 .slide-container.bleed-image-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; align-items: start; }
 .slide-container.bleed-image-layout > .content-container { padding: 80px; display: flex; flex-direction: column; justify-content: center; height: 100%; }
-.slide-container.bleed-image-layout > .image-container { height: 100%; width: 100%; overflow: hidden; border-left: 5px solid var(--accent-secondary); }
+.slide-container.bleed-image-layout > .image-container { height: 100%; width: 100%; overflow: hidden; border-left: 5px solid var(--accent-secondary); background: #f1f5f9; display:flex; justify-content:center; align-items:center; }
 .slide-container.bleed-image-layout img.bleed-image-side { width: 100%; height: 100%; object-fit: cover; }
 
-/* Tiled Content */
 .tiled-content { display: flex; gap: 30px; width: 100%; height: 100%; align-items: stretch; }
-.tile { background: var(--card-bg); border: 1px solid var(--border-color); padding: 30px; flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 4px; }
+.tile { background: var(--card-bg); border: 1px solid var(--border-color); padding: 30px; flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 .tile .icon { color: var(--accent-primary); font-size: 48px; margin-bottom: 20px; }
 
-/* MathJax - Dark text for light mode */
 mjx-container { color: #000 !important; font-size: 115% !important; font-weight: 500; }
 
-/* Charts */
 .bar-chart-container { display: flex; flex-direction: column; gap: 15px; width: 100%; }
 .bar-row { display: flex; align-items: center; gap: 20px; }
 .bar-label { width: 150px; text-align: right; font-weight: 600; color: var(--text-color); }
 .bar-track { flex-grow: 1; background: #e2e8f0; height: 40px; border-radius: 4px; overflow: hidden; }
 .bar-fill { height: 100%; background: var(--accent-primary); display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; font-weight: bold; color: #fff; }
 
+.heatmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; width: 300px; height: 300px; }
+.cell { width: 100%; height: 100%; border-radius: 2px; }
+.cell.high { background: #1e3a8a; } 
+.cell.med { background: #60a5fa; } 
+.cell.low { background: #e2e8f0; } 
+
 .section-title-layout { text-align: center; }
 .section-title-layout hr { width: 100px; border: 2px solid var(--accent-secondary); margin: 30px auto; }
 
-/* VAE Diagram (CSS) */
+/* Diagrams */
 .vae-diagram { display:flex; align-items:center; justify-content:center; gap:10px; height:100%; width:100%; background: #fff; padding:20px; }
 .vae-box { padding: 20px; background: var(--card-bg); border: 2px solid var(--accent-primary); color: var(--text-color); text-align: center; border-radius: 4px; width: 120px; font-weight: bold; }
 .vae-latent { padding: 30px; border-radius: 50%; border: 2px dashed var(--accent-secondary); background: #fffbeb; width: 140px; height: 140px; display:flex; align-items:center; justify-content:center; flex-direction:column; color: var(--text-color); }
 .arrow { font-size: 30px; color: var(--text-color); }
+
+.lda-box { border: 2px solid #333; padding: 15px; margin: 10px; background: #fff; text-align: center; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+/* Acknowledgements Grid */
+.ack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    text-align: left;
+    width: 100%;
+}
+.ack-section h4 {
+    color: var(--accent-secondary);
+    margin-bottom: 10px;
+    font-size: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 5px;
+}
+.ack-section p {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
 </style>
 </head>
 <body>
 
-<button class="export-btn" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Print to PDF</button>
+<div class="controls">
+    <button class="btn" id="prev-btn" style="display:none;" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+    <div class="slide-counter" id="slide-counter">1 / 34</div>
+    <button class="btn" id="next-btn" style="display:none;" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
+    <button class="btn btn-secondary" id="present-btn" onclick="togglePresentMode()"><i class="fa-solid fa-play"></i> Present</button>
+    <button class="btn" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+</div>
 
 <!-- Slide 1: Title -->
-<div class="slide-container" id="slide1">
+<div class="slide-container active" id="slide1">
     <div class="title-layout">
         <div style="display:flex; justify-content:center; margin-bottom:30px;">
             <div style="width:150px; height:150px; border-radius:50%; overflow:hidden; border: 4px solid var(--accent-primary); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <!-- Stable Wikimedia Link -->
                 <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Leonhard_Euler.jpg/800px-Leonhard_Euler.jpg" alt="Portrait of Leonhard Euler" style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
         <h1>Connecting the Dots</h1>
         <p class="subtitle">How Euler's Timeless Functions Are Shaping<br>the Future of Science and AI</p>
-        <p style="text-align:center; margin-top:40px; font-size:16px; color:#64748b;">Based on the Capstone Project by Wai Yan Tun Oo</p>
+        <p style="text-align:center; margin-top:40px; font-size:16px; color:#64748b;">Wai Yan Tun Oo — Capstone (University of Yangon)<br>Submitted 22 Dec 2025</p>
     </div>
 </div>
 
@@ -220,17 +307,27 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
         <div class="two-column">
             <div>
                 <h3>Bridging the Gap</h3>
-                <p>The factorial function $n!$ is discrete, defined only for positive integers.</p>
+                <p><strong>Problem:</strong> Factorial $n!$ is defined only for integers.</p>
                 <ul>
-                    <li>$1! = 1$</li>
-                    <li>$2! = 2$</li>
                     <li>$3! = 6$</li>
+                    <li>$4! = 24$</li>
                 </ul>
-                <p style="margin-top:20px;"><strong>The Challenge:</strong> Find a smooth, continuous curve that passes through these points, allowing us to calculate values like $(1/2)!$</p>
+                <p style="margin-top:20px; font-weight:bold; color:var(--accent-secondary);">The Question: What is $2.5!$?</p>
+                <p>Euler's answer: Build a smooth interpolation — the Gamma function.</p>
             </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Gamma_plot.svg/800px-Gamma_plot.svg.png" alt="Figure 2.1: Gamma function curve interpolating factorials">
-                <p style="position:absolute; bottom:10px; right:20px; font-size:14px; font-weight:bold; background:rgba(255,255,255,0.9); padding:4px 8px; border:1px solid #ccc; border-radius:4px;">Fig 2.1: $\Gamma(x)$ Interpolation</p>
+            <div class="image-wrapper" style="background:#fff;">
+                <!-- Native SVG for Gamma Function Interpolation -->
+                <svg viewBox="0 0 400 300" width="100%" height="100%">
+                    <line x1="50" y1="250" x2="350" y2="250" stroke="#333" stroke-width="2"/>
+                    <line x1="50" y1="50" x2="50" y2="250" stroke="#333" stroke-width="2"/>
+                    <path d="M 50 240 Q 150 240 300 50" fill="none" stroke="#1e3a8a" stroke-width="4"/>
+                    <circle cx="100" cy="220" r="6" fill="#b45309"/> 
+                    <circle cx="150" cy="180" r="6" fill="#b45309"/> 
+                    <circle cx="200" cy="120" r="6" fill="#b45309"/> 
+                    <circle cx="175" cy="150" r="6" fill="#ef4444"/> 
+                    <text x="185" y="155" font-family="Arial" font-size="14" fill="#ef4444" font-weight="bold">2.5!</text>
+                    <text x="250" y="80" font-family="Arial" font-size="14" font-weight="bold" fill="#1e3a8a">y = &Gamma;(x+1)</text>
+                </svg>
             </div>
         </div>
     </div>
@@ -238,42 +335,56 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
 
 <!-- Slide 3: Euler's Resolution -->
 <div class="slide-container" id="slide3">
-    <h2 class="slide-title">Euler's Elegant Resolution</h2>
+    <h2 class="slide-title">Euler's Resolution</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column tiled">
             <div>
-                <h3>The Gamma Function</h3>
-                <p>Euler defined the function not algebraically, but via an improper integral:</p>
+                <h3>Euler's Integral</h3>
+                <p>Euler's integral of the second kind:</p>
                 <div style="margin: 30px 0; text-align: center;">
-                    $$\Gamma(z) = \int_{0}^{\infty} t^{z-1} e^{-t} dt$$
+                    $$\Gamma(z) = \int_{0}^{\infty} t^{z-1} e^{-t} dt, \quad \Re(z) > 0$$
                 </div>
-                <p>This is <strong>Euler's Integral of the Second Kind</strong>.</p>
             </div>
             <div>
-                <h3>Key Properties</h3>
-                <p>The solution to the interpolation problem lies in the recursive <strong>Functional Equation</strong>:</p>
+                <h3>Recurrence</h3>
+                <p>The key property:</p>
                 <div style="margin: 30px 0; text-align: center;">
                     $$\Gamma(z+1) = z\Gamma(z)$$
                 </div>
-                <p>This relation allows us to compute $n! = \Gamma(n+1)$ for any integer $n$.</p>
+                <p>This ensures $\Gamma(n+1) = n!$.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Slide 4: The Complex Plane -->
+<!-- Slide 4: Analytic Continuation -->
 <div class="slide-container" id="slide4">
-    <h2 class="slide-title">The Complex Landscape</h2>
+    <h2 class="slide-title">Analytic Continuation</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column">
             <div>
-                <h3>Poles and Analytics</h3>
-                <p>Extended to the complex plane $\mathbb{C}$, $\Gamma(z)$ is <strong>meromorphic</strong>.</p>
-                <p>It has <strong>simple poles</strong> at $z = 0, -1, -2, \dots$</p>
-                <p>At these points, the function approaches infinity, meaning $(-1)!$ is undefined.</p>
+                <h3>Properties</h3>
+                <p>$\Gamma(z)$ extends meromorphically to $\mathbb{C}$.</p>
+                <p>It has <strong>simple poles</strong> at $0, -1, -2, \dots$</p>
+                <p>Important special value (Proof in Appendix A):</p>
+                <div style="text-align:center;">$$\Gamma(1/2) = \sqrt{\pi}$$</div>
             </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Gamma_abs_3D.png/800px-Gamma_abs_3D.png" alt="3D graph of Gamma function" style="object-fit:cover;">
+            <div class="image-wrapper" style="background:#fff;">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <line x1="20" y1="100" x2="180" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                    <line x1="100" y1="20" x2="100" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="170" y="90" font-size="12">Re</text>
+                    <text x="150" y="30" font-size="12">Im</text>
+                    
+                    <line x1="100" y1="95" x2="100" y2="105" stroke="#333" stroke-width="1"/>
+                    <text x="95" y="115" font-size="10">-1</text>
+                    <text x="95" y="90" font-size="10" fill="#ef4444">Pole</text>
+                    <circle cx="100" cy="100" r="4" fill="#ef4444"/>
+
+                    <line x1="60" y1="95" x2="60" y2="105" stroke="#333" stroke-width="1"/>
+                    <text x="55" y="115" font-size="10">-2</text>
+                    <circle cx="60" cy="100" r="4" fill="#ef4444"/>
+                </svg>
             </div>
         </div>
     </div>
@@ -285,17 +396,18 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column">
             <div>
-                <h3>Modeling Proportions</h3>
-                <p>Defined on the interval $(0,1)$, the Beta function is perfect for modeling probabilities:</p>
+                <h3>Definition</h3>
+                <p>Euler's integral of the first kind:</p>
                 <div style="margin: 20px 0;">
                     $$B(x,y) = \int_{0}^{1} t^{x-1} (1-t)^{y-1} dt$$
                 </div>
+                <p>Defined for $\Re(x), \Re(y) > 0$.</p>
             </div>
             <div class="tile">
                  <div class="icon"><i class="fa-solid fa-scale-balanced"></i></div>
                  <h3>Symmetry</h3>
                  <p>$$B(x,y) = B(y,x)$$</p>
-                 <p>This symmetry makes it ideal for modeling binary outcomes like "Head/Tail" or "Success/Failure".</p>
+                 <p>Ideal for modeling binary outcomes like "Head/Tail" or "Success/Failure".</p>
             </div>
         </div>
     </div>
@@ -307,19 +419,15 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column tiled">
              <div>
-                <h3>The Bridge</h3>
-                <p>Connecting the Gamma and Beta functions:</p>
+                <h3>The Beta-Gamma Identity</h3>
                 <div style="text-align:center; margin: 30px 0;">
                     $$B(x,y) = \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)}$$
                 </div>
             </div>
             <div>
-                <h3>Why it Matters</h3>
-                <p>This identity allows us to:</p>
-                <ul>
-                    <li>Convert complex double integrals into products of single integrals.</li>
-                    <li>Derive Conjugate Priors for Bayesian Statistics effortlessly.</li>
-                </ul>
+                <h3>Utility</h3>
+                <p>This identity converts complex double integrals into products of single integrals.</p>
+                <p>It acts as a computational bridge, essential for Bayesian inference.</p>
             </div>
         </div>
     </div>
@@ -327,568 +435,559 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
 
 <!-- Slide 7: Bohr-Mollerup Theorem -->
 <div class="slide-container" id="slide7">
-    <h2 class="slide-title">The Bohr-Mollerup Theorem (1922)</h2>
-    <p class="subtitle" style="text-align:left; margin-bottom:40px;">Why is the Gamma function unique? It is the only function $f(x)$ that satisfies:</p>
+    <h2 class="slide-title">Bohr-Mollerup: Why Gamma is unique</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="tiled-content">
             <div class="tile">
-                <div class="icon"><i class="fa-solid fa-ruler-vertical"></i></div>
-                <h3>1. Normalization</h3>
-                <p>$$f(1) = 1$$</p>
+                <div class="icon"><i class="fa-solid fa-check"></i></div>
+                <h3>Uniqueness (1922)</h3>
+                <p>The unique $f$ satisfying:</p>
+                <ol style="text-align:left; font-size:18px;">
+                    <li>$f(1)=1$</li>
+                    <li>$f(x+1)=x f(x)$</li>
+                    <li>$\log f(x)$ is convex</li>
+                </ol>
+                <p>is $f = \Gamma$.</p>
             </div>
             <div class="tile">
-                <div class="icon"><i class="fa-solid fa-arrows-spin"></i></div>
-                <h3>2. Recurrence</h3>
-                <p>$$f(x+1) = xf(x)$$</p>
-            </div>
-            <div class="tile">
-                <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
-                <h3>3. Log-Convexity</h3>
-                <p>$$\log(f(x)) \text{ is convex}$$</p>
+                <div class="icon"><i class="fa-solid fa-tree"></i></div>
+                <h3>Consequence</h3>
+                <p>Gamma's "naturalness" explains its repeated appearance in diverse scientific fields.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Slide 8: Section Title - Classical Atlas -->
+<!-- Slide 8: The Classical Atlas -->
 <div class="slide-container" id="slide8">
     <div class="section-title-layout">
         <hr>
         <h2>The Classical Atlas</h2>
-        <p>Applications in Physics and Statistics</p>
+        <p>Overview of Applications</p>
+    </div>
+    <div class="content-area" style="flex-grow:1; display:flex; justify-content:center; gap:40px;">
+        <div class="tile">
+            <h3>Physics</h3>
+            <p>Hypersphere volumes</p>
+            <p>Scattering amplitudes (Veneziano)</p>
+        </div>
+        <div class="tile">
+            <h3>Statistics</h3>
+            <p>Gamma & Beta distributions</p>
+            <p>Dirichlet for topic models (LDA)</p>
+        </div>
     </div>
 </div>
 
-<!-- Slide 9: Physics 1 - Hyperspheres -->
+<!-- Slide 9: Physics: Hypersphere Volume -->
 <div class="slide-container" id="slide9">
-    <h2 class="slide-title">Physics: N-Dimensional Geometry</h2>
+    <h2 class="slide-title">Physics: Hypersphere Volume</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column">
              <div>
-                <h3>Hypersphere Volumes</h3>
-                <p>The volume of a ball in $n$-dimensions depends on $\Gamma$:</p>
+                <h3>Volume of n-ball</h3>
                 <div style="margin:20px 0;">
                     $$V_n(R) = \frac{\pi^{n/2}}{\Gamma(\frac{n}{2} + 1)} R^n$$
                 </div>
-                <p>This is crucial for <strong>Statistical Mechanics</strong> when calculating the phase space volume of a gas with $N$ particles (where dimensions $\approx 10^{23}$).</p>
+                <p>Essential for statistical mechanics and high-dimensional geometry.</p>
             </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/8-cell-simple.svg/600px-8-cell-simple.svg.png" alt="Hypersphere projection" style="object-fit:contain;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 10: Physics 2 - String Theory -->
-<div class="slide-container" id="slide10">
-    <h2 class="slide-title">Physics: String Theory</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-             <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Calabi_Yau_manifold.jpg/800px-Calabi_Yau_manifold.jpg" alt="Calabi Yau manifold">
-            </div>
-            <div>
-                <h3>The Veneziano Amplitude</h3>
-                <p>In 1968, Gabriele Veneziano found that the Beta function perfectly described the scattering amplitude of strong interactions:</p>
-                <div style="margin:20px 0; font-size: 22px;">
-                    $$A(s,t) \sim B(-\alpha(s), -\alpha(t))$$
-                </div>
-                <p>This accidental discovery kickstarted <strong>String Theory</strong>, where particles are modeled as vibrating strings.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 11: Statistics 1 - Gamma Distribution -->
-<div class="slide-container" id="slide11">
-    <h2 class="slide-title">Statistics: The Gamma Distribution</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column tiled">
-             <div>
-                <h3>Definition</h3>
-                <p>Models the time until $k$ events occur in a Poisson process.</p>
-                <p>PDF:</p>
-                <div style="margin:20px 0;">
-                    $$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}$$
-                </div>
-            </div>
-            <div>
-                <h3>Applications</h3>
-                <ul>
-                    <li>Waiting times (Queueing Theory)</li>
-                    <li>Insurance Claims size</li>
-                    <li>Rainfall amounts</li>
-                    <li>Component lifetimes</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 12: Statistics 2 - Beta Distribution -->
-<div class="slide-container" id="slide12">
-    <h2 class="slide-title">Statistics: The Beta Distribution</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-             <div>
-                <h3>The Probability of Probabilities</h3>
-                <p>Defined on $[0,1]$, it models the uncertainty of a probability $p$.</p>
-                <p>If you flip a coin and get 3 heads and 7 tails, your belief about the coin's bias is modeled by a Beta distribution.</p>
-                <p style="color:var(--accent-secondary);">It is the "Hello World" of Bayesian Statistics.</p>
-            </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Beta_distribution_pdf.svg/800px-Beta_distribution_pdf.svg.png" alt="Beta distribution plots">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 13: Statistics 3 - Dirichlet Distribution -->
-<div class="slide-container" id="slide13">
-    <h2 class="slide-title">Statistics: The Dirichlet Distribution</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="tiled-content">
-            <div class="tile">
-                <div class="icon"><i class="fa-solid fa-cubes-stacked"></i></div>
-                <h3>Multivariate</h3>
-                <p>Generalizes Beta from 2 outcomes (Coin) to $K$ outcomes (Dice).</p>
-            </div>
-            <div class="tile">
-                <div class="icon"><i class="fa-solid fa-pie-chart"></i></div>
-                <h3>Simplex</h3>
-                <p>Distributions live on a simplex where $\sum x_i = 1$. Perfect for mixture models.</p>
-            </div>
-            <div class="tile">
-                <div class="icon"><i class="fa-solid fa-newspaper"></i></div>
-                <h3>Text Mining</h3>
-                <p>The core prior for Topic Models (LDA), representing document-topic mixtures.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 14: Conjugate Priors -->
-<div class="slide-container" id="slide14">
-    <h2 class="slide-title">Conjugate Priors: Mathematical Symmetry</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <h3>The Updating Mechanism</h3>
-                <p>If Prior is $\text{Beta}(\alpha, \beta)$ and Likelihood is $\text{Binomial}(s, f)$:</p>
-                <div style="background:var(--card-bg); padding:20px; border:1px solid var(--accent-primary); margin-top:20px;">
-                    <p style="margin:0; text-align:center;">Posterior is:</p>
-                    $$\text{Beta}(\alpha + s, \beta + f)$$
-                </div>
-                <p style="margin-top:20px;">We simply <strong>add</strong> successes ($s$) to $\alpha$ and failures ($f$) to $\beta$. No complex integration required.</p>
-            </div>
-             <div class="tile" style="text-align: left;">
-                <h3>Why Conjugacy Matters</h3>
-                <p>In AI, we process millions of data points. We cannot solve integrals numerically every time.</p>
-                <p>Conjugate priors allow for <strong>instant, algebraic updates</strong> of the model's beliefs.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 15: LDA -->
-<div class="slide-container bleed-image-layout" id="slide15">
-    <div class="content-container">
-        <h2 class="slide-title">Latent Dirichlet Allocation (LDA)</h2>
-        <div class="content-area">
-            <h3>Unsupervised Learning</h3>
-            <p>LDA allows machines to discover hidden thematic structures in vast archives of text without human labeling.</p>
-            <p>The <strong>Dirichlet Distribution</strong> is used as a prior to model:</p>
-            <ul>
-                <li>The distribution of topics within a document.</li>
-                <li>The distribution of words within a topic.</li>
-            </ul>
-        </div>
-    </div>
-    <div class="image-container">
-        <img referrerpolicy="no-referrer" class="bleed-image-side" style="object-fit:contain;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Smoothed_LDA.png/800px-Smoothed_LDA.png" alt="LDA Diagram">
-    </div>
-</div>
-
-<!-- Slide 16: Section Title - Generalization -->
-<div class="slide-container" id="slide16">
-    <div class="section-title-layout">
-        <hr>
-        <h2>Generalizing the Toolkit</h2>
-        <p>From Scalars to Matrices, From Continuous to Discrete</p>
-    </div>
-</div>
-
-<!-- Slide 17: Matrix Variate Gamma -->
-<div class="slide-container" id="slide17">
-    <h2 class="slide-title">Matrix-Variate Functions</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column tiled">
-            <div>
-                <h3>Scalar $\Gamma(z)$</h3>
-                <p>Accepts a single number.</p>
-                <hr style="border-color:var(--border-color); opacity:0.3;">
-                <p>Models a <strong>single quantity</strong> (e.g., variance of one variable).</p>
-                <p style="color:var(--accent-primary);">Limited to independent components.</p>
-            </div>
-            <div>
-                <h3>Matrix $\Gamma_p(A)$</h3>
-                <p>Accepts a $p \times p$ matrix.</p>
-                <hr style="border-color:var(--border-color); opacity:0.3;">
-                <p>Models <strong>entire systems</strong> (e.g., Covariance Matrices).</p>
-                <p style="color:var(--accent-secondary);">Captures correlations and interdependencies.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 18: The Wishart Distribution -->
-<div class="slide-container" id="slide18">
-    <h2 class="slide-title">The Wishart Distribution</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-             <div>
-                <h3>Matrix Gamma in Action</h3>
-                <p>The <strong>Wishart Distribution</strong> is the multivariate generalization of the Gamma distribution.</p>
-                <p>It is defined over positive-definite matrices (like Covariance Matrices).</p>
-                <div style="margin:20px 0;">
-                    $$W \sim \mathcal{W}_p(V, n)$$
-                </div>
-                <p>Used to model the <strong>uncertainty of the covariance structure</strong> itself.</p>
-            </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Covariance_matrix.svg/600px-Covariance_matrix.svg.png" alt="Covariance Matrix" style="object-fit:contain;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 19: Time Scales Calculus -->
-<div class="slide-container" id="slide19">
-    <h2 class="slide-title">Time Scales Calculus</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <div class="image-wrapper" style="background:transparent; border: 1px solid var(--accent-primary); display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                    <!-- CSS SVG Graph -->
-                    <div style="font-size:14px; color:#64748b; margin-bottom:10px;">Discrete vs Continuous</div>
-                    <svg width="300" height="200">
-                         <!-- Continuous Curve -->
-                        <path d="M 10 180 Q 75 20 150 180 T 290 180" fill="none" stroke="#1e3a8a" stroke-width="3" />
-                        <!-- Discrete Points -->
-                        <circle cx="10" cy="180" r="4" fill="#b45309" />
-                        <circle cx="45" cy="110" r="4" fill="#b45309" />
-                        <circle cx="80" cy="80" r="4" fill="#b45309" />
-                        <circle cx="115" cy="110" r="4" fill="#b45309" />
-                        <circle cx="150" cy="180" r="4" fill="#b45309" />
-                        <circle cx="185" cy="150" r="4" fill="#b45309" />
-                        <circle cx="220" cy="120" r="4" fill="#b45309" />
-                        <circle cx="255" cy="150" r="4" fill="#b45309" />
-                        <circle cx="290" cy="180" r="4" fill="#b45309" />
-                    </svg>
-                </div>
-            </div>
-            <div>
-                <h3>Unifying the Discrete & Continuous</h3>
-                <p>Standard calculus handles continuous time ($\mathbb{R}$). Difference calculus handles discrete steps ($\mathbb{Z}$).</p>
-                <p><strong>Time Scales Calculus</strong> unifies them into a single framework ($\mathbb{T}$).</p>
-                <p><strong>Goal:</strong> A Generalized Gamma Function that interpolates factorials regardless of the domain's nature.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 20: Quantum Calculus -->
-<div class="slide-container" id="slide20">
-    <h2 class="slide-title">Quantum Calculus: The q-Gamma</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <h3>Deforming the Math</h3>
-                <p>The <strong>q-Gamma function</strong> $\Gamma_q(z)$ is a q-analog of the standard Gamma function.</p>
-                <div style="margin:20px 0;">
-                    $$\Gamma_q(z) = \frac{(1-q)^{1-z} (q;q)_\infty}{(q^z;q)_\infty}$$
-                </div>
-                <p>As $q \to 1$, $\Gamma_q(z) \to \Gamma(z)$.</p>
-            </div>
-            <div class="image-wrapper">
-                 <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Bloch_sphere.svg/600px-Bloch_sphere.svg.png" alt="Bloch Sphere" style="object-fit:contain;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 21: Section Title - AI Applications -->
-<div class="slide-container" id="slide21">
-    <div class="section-title-layout">
-        <hr>
-        <h2>Forging Trustworthy AI</h2>
-        <p>Solving the "Black Box" Problem with Bayesian Priors</p>
-    </div>
-</div>
-
-<!-- Slide 22: The Black Box Problem -->
-<div class="slide-container bleed-image-layout" id="slide22">
-     <div class="content-container">
-        <h2 class="slide-title">The "Black Box" Problem</h2>
-        <div class="content-area">
-            <h3>Confident but Wrong</h3>
-            <p>Modern Deep Learning models are incredibly accurate but notoriously <strong>overconfident</strong>.</p>
-            <p>They provide point estimates (e.g., "This is a cat") without a measure of uncertainty.</p>
-            <p style="color:#dc2626;">This is dangerous in high-stakes fields like medicine and autonomous driving.</p>
-        </div>
-    </div>
-    <div class="image-container">
-        <img referrerpolicy="no-referrer" class="bleed-image-side" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_Blue_Gene_P_supercomputer.jpg/640px-IBM_Blue_Gene_P_supercomputer.jpg" alt="Supercomputer">
-    </div>
-</div>
-
-<!-- Slide 23: Bayesian Neural Networks -->
-<div class="slide-container" id="slide23">
-    <h2 class="slide-title">Bayesian Neural Networks (BNNs)</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-             <div>
-                <h3>Learning Distributions</h3>
-                <p>Instead of learning a single value for each weight $w$, BNNs learn a probability distribution $P(w)$.</p>
-                <p><strong>Matrix-Variate Priors:</strong> By using Wishart priors, the BNN learns how weights are correlated.</p>
-                <p>This structure allows the network to say "I don't know" when it encounters novel data.</p>
-            </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Colored_neural_network.svg/800px-Colored_neural_network.svg.png" alt="BNN Diagram">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 24: Variational Autoencoders (VAEs) -->
-<div class="slide-container" id="slide24">
-    <h2 class="slide-title">Variational Autoencoders (VAEs)</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <h3>Structuring Latent Space</h3>
-                <p>VAEs force the latent code $z$ to follow a prior distribution $p(z)$, usually Gaussian.</p>
-                <p>We minimize the <strong>KL Divergence</strong> between the learned posterior and the prior.</p>
-                <div style="margin:20px 0;">
-                    $$D_{KL}(q(z|x) || p(z))$$
-                </div>
-                <p>The closed-form solution for this divergence relies directly on Gamma/log-Gamma properties.</p>
-            </div>
-            <div class="image-wrapper" style="background:var(--card-bg); border:none;">
-                 <!-- CSS VAE Diagram (Native) -->
-                 <div class="vae-diagram">
-                    <div class="vae-box">Encoder<br>$q(z|x)$</div>
-                    <div class="arrow">→</div>
-                    <div class="vae-latent">
-                        <div style="font-size:12px; font-weight:bold; color:var(--accent-secondary);">Latent Space</div>
-                        <div style="font-size:10px; opacity:0.7;">Distributions</div>
-                    </div>
-                    <div class="arrow">→</div>
-                    <div class="vae-box">Decoder<br>$p(x|z)$</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 25: Information Geometry -->
-<div class="slide-container" id="slide25">
-    <h2 class="slide-title">Information Geometry</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <h3>The Shape of Knowledge</h3>
-                <p>Probability distributions form a curved Riemannian manifold.</p>
-                <p>The <strong>Fisher Information Metric</strong> $g_{\mu\nu}$ acts as the metric tensor.</p>
-                <p>For Gamma distributions, the curvature is defined by <strong>Polygamma functions</strong> $\psi^{(n)}(z)$, derivatives of $\log \Gamma(z)$.</p>
-            </div>
-            <div class="image-wrapper">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Hyperbolic_triangle.svg/600px-Hyperbolic_triangle.svg.png" alt="Hyperbolic Geometry" style="object-fit:contain;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 26: Case Study 1 - A/B Testing -->
-<div class="slide-container" id="slide26">
-    <h2 class="slide-title">Case Study 1: Bayesian A/B Testing</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div style="display:flex; flex-direction:column; justify-content:center;">
-                <h3>Quantifying Uplift</h3>
-                <p>Using Beta distributions as priors for conversion rates, we can derive full posterior distributions.</p>
-                <p><strong>Result:</strong> We don't just get a "winner"; we get the <em>Probability of Superiority</em> (e.g., "96.5% chance B is better") and the expected risk.</p>
-            </div>
-            <div class="bar-chart-container" style="justify-content:center;">
-                <div class="bar-row">
-                    <div class="bar-label">Version A</div>
-                    <div class="bar-track"><div class="bar-fill" style="width: 45%;">10.0%</div></div>
-                </div>
-                <div class="bar-row">
-                    <div class="bar-label">Version B</div>
-                    <div class="bar-track"><div class="bar-fill" style="width: 55%; background: linear-gradient(90deg, #b45309, #d97706);">12.2%</div></div>
-                </div>
-                <div class="bar-row">
-                    <div class="bar-label">Uplift</div>
-                    <div class="bar-track" style="background:transparent;"><div style="color:var(--accent-secondary); padding-left:10px; font-size:24px;">+22% Improvement</div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 27: Case Study 2 - Finance -->
-<div class="slide-container" id="slide27">
-    <h2 class="slide-title">Case Study 2: Covariance in Finance</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <h3>Stabilizing Risk Estimation</h3>
-                <p>Sample covariance matrices from historical stock data are noisy and unstable.</p>
-                <p><strong>The Solution:</strong> Hierarchical Bayesian modeling with <strong>Inverse-Wishart Priors</strong> (Matrix Gamma).</p>
-                <p>This "shrinks" extreme correlations towards a stable prior, preventing dangerous portfolio allocations.</p>
-            </div>
-            <div class="image-wrapper" style="background:#fff; border:none; justify-content:center;">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Covariance_matrix.svg/600px-Covariance_matrix.svg.png" alt="Covariance Matrix" style="object-fit:contain;">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 28: Case Study 3 - The Problem -->
-<div class="slide-container bleed-image-layout" id="slide28">
-    <div class="content-container">
-        <h2 class="slide-title">Case Study 3: Medical Diagnosis</h2>
-        <div class="content-area">
-            <h3>The "Confidently Wrong" Trap</h3>
-            <p>Standard Deep Learning uses <strong>Softmax</strong>, which assumes a "Closed World"—every input <em>must</em> belong to a known class.</p>
-            <ul>
-                <li><strong>The Danger:</strong> If a model trained on tumors sees a rare genetic anomaly (OOD), Softmax forces it to choose "Tumor" or "Benign", often with 99% confidence.</li>
-                <li><strong>The Consequence:</strong> Silent failures in safety-critical systems. The AI lacks the language to say "I have never seen this before."</li>
-            </ul>
-        </div>
-    </div>
-    <div class="image-container">
-        <img referrerpolicy="no-referrer" class="bleed-image-side" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Mri_brain_tumor.jpg/640px-Mri_brain_tumor.jpg" alt="MRI Brain Scan">
-    </div>
-</div>
-
-<!-- Slide 29: Case Study 3 - Visualization -->
-<div class="slide-container" id="slide29">
-    <h2 class="slide-title">The Solution: Geometry of Uncertainty</h2>
-    <div class="content-area" style="flex-grow:1; display:flex;">
-        <div class="two-column">
-            <div>
-                <h3>Mahalanobis Distance</h3>
-                <p>We replace simple Euclidean distance (which ignores data shape) with <strong>Mahalanobis Distance</strong>. It measures "statistical distance" by accounting for correlations.</p>
-                <div style="margin:20px 0;">
-                    $$D_M(x) = \sqrt{ (x - \mu)^T \Sigma^{-1} (x - \mu) }$$
-                </div>
-                <p>It essentially asks: <em>"How many standard deviations is this point away from the group mean, given the group's shape?"</em></p>
-                <p style="color:var(--accent-secondary);"><strong>Result:</strong> An anomaly far from the learned distribution—even if close to the decision boundary—is correctly flagged as "Unknown".</p>
-            </div>
-            
-            <!-- Custom CSS Diagram for OOD Detection -->
-            <div style="background:var(--card-bg); border:1px solid var(--border-color); position:relative; width:100%; height:100%; overflow:hidden; border-radius:4px;">
-                <p style="position:absolute; top:10px; left:20px; color:var(--text-color); font-size:16px;"><strong>Visualizing Uncertainty</strong></p>
-                
-                <!-- Axis Lines -->
-                <div style="position:absolute; bottom:40px; left:40px; width:400px; height:2px; background:#475569;"></div>
-                <div style="position:absolute; bottom:40px; left:40px; width:2px; height:350px; background:#475569;"></div>
-                
-                <!-- Normal Data Distribution (Blue Ellipse) -->
-                <div style="position:absolute; bottom:100px; left:100px; width:200px; height:120px; 
-                            border: 2px solid var(--accent-primary); border-radius:50%; 
-                            background:rgba(30, 58, 138, 0.1); transform: rotate(-20deg);">
-                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:var(--accent-primary); font-size:14px; font-weight:bold;">Training Data<br>(Healthy)</div>
-                </div>
-                
-                <!-- Decision Boundary (Line) -->
-                <div style="position:absolute; top:0; left:280px; width:2px; height:500px; background:#ef4444; border-right: 4px dashed rgba(239, 68, 68, 0.2);"></div>
-                <div style="position:absolute; bottom:20px; left:300px; color:#ef4444; font-size:14px;">Decision Boundary</div>
-
-                <!-- Point A: In Distribution -->
-                <div style="position:absolute; bottom:140px; left:180px; width:12px; height:12px; background:#1e293b; border-radius:50%;"></div>
-                <div style="position:absolute; bottom:155px; left:180px; font-size:12px; color:#1e293b;">Patient A<br>(Safe)</div>
-
-                <!-- Point B: Out of Distribution (The Anomaly) -->
-                <div style="position:absolute; top:80px; left:320px; width:12px; height:12px; background:#b45309; border-radius:50%; box-shadow: 0 0 10px #b45309;"></div>
-                <div style="position:absolute; top:95px; left:330px; font-size:12px; color:#b45309; width:150px;">
-                    <strong>Patient B (Anomaly)</strong><br>
-                    <span style="color:#64748b;">High Confidence on Softmax, but <br><strong>High Uncertainty</strong> via Mahalanobis</span>
-                </div>
-                
-                <!-- Distance Arrow -->
-                <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
-                    <line x1="200" y1="300" x2="325" y2="120" stroke="rgba(180, 83, 9, 0.5)" stroke-width="2" stroke-dasharray="5,5" />
+            <div class="image-wrapper" style="background:#fff;">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <circle cx="100" cy="100" r="90" stroke="#1e3a8a" fill="none" stroke-width="2"/>
+                    <ellipse cx="100" cy="100" rx="90" ry="30" stroke="#1e3a8a" fill="none" stroke-width="1"/>
+                    <ellipse cx="100" cy="100" rx="40" ry="90" stroke="#1e3a8a" fill="none" stroke-width="1"/>
+                    <ellipse cx="100" cy="100" rx="90" ry="70" stroke="#1e3a8a" fill="none" stroke-width="1" stroke-dasharray="5,5"/>
                 </svg>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Slide 30: Case Study 3 - Implementation -->
-<div class="slide-container" id="slide30">
-    <h2 class="slide-title">Powered by Matrix Gamma</h2>
+<!-- Slide 10: Physics: Veneziano Amplitude -->
+<div class="slide-container" id="slide10">
+    <h2 class="slide-title">Physics: Veneziano Amplitude</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+             <div class="image-wrapper" style="background:#fff;">
+                <svg viewBox="0 0 300 150" width="100%" height="100%">
+                    <path d="M 20 75 Q 150 10 280 75" fill="none" stroke="#b45309" stroke-width="3" />
+                    <path d="M 20 75 Q 150 140 280 75" fill="none" stroke="#b45309" stroke-width="3" stroke-dasharray="5,5"/>
+                    <text x="110" y="140" font-size="14">Vibrating String</text>
+                </svg>
+            </div>
+            <div>
+                <h3>String Scattering (1968)</h3>
+                <p>Veneziano amplitude expressed via Beta:</p>
+                <div style="margin:20px 0; font-size: 22px;">
+                    $$A(s,t) \propto B(-\alpha(s), -\alpha(t))$$
+                </div>
+                <p>Historic role in founding string theory.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Statistics: Gamma Distribution -->
+<div class="slide-container" id="slide11">
+    <h2 class="slide-title">Statistics: Gamma Distribution</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column tiled">
-            <div>
-                <h3>The Wishart Distribution</h3>
-                <p>To compute Mahalanobis distance, we need the Inverse Covariance Matrix $\Sigma^{-1}$. But estimating this from limited medical data is prone to error.</p>
-                <p>We solve this by placing a <strong>Wishart Prior</strong> (the Matrix-Variate Gamma) on the matrix itself:</p>
+             <div>
+                <h3>Density</h3>
+                <p>Shape $\alpha$, Rate $\beta$:</p>
                 <div style="margin:20px 0;">
-                    $$\mathcal{W}(\Sigma^{-1} | W, \nu) \propto |\Sigma^{-1}|^{\frac{\nu-p-1}{2}} e^{-\frac{1}{2} \text{tr}(W^{-1}\Sigma^{-1})}$$
+                    $$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}, \quad x > 0$$
                 </div>
             </div>
             <div>
-                <h3>The Safety Net</h3>
-                <p>This prior acts as a "Safety Net". It encodes a prior belief about what biological correlations should look like.</p>
+                <h3>Applications</h3>
                 <ul>
-                    <li><strong>Robustness:</strong> Prevents the model from overfitting to noise in small patient cohorts.</li>
-                    <li><strong>Human-in-the-Loop:</strong> High uncertainty scores trigger a "Refer to Doctor" action, bridging the gap between AI efficiency and human judgment.</li>
+                    <li>Waiting times</li>
+                    <li>Reliability Engineering</li>
+                    <li>Insurance Claims</li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Slide 31: Future Horizons - RMT -->
-<div class="slide-container" id="slide31">
-    <h2 class="slide-title">Future Horizons: A Grand Unification?</h2>
+<!-- Slide 12: Statistics: Beta & Dirichlet -->
+<div class="slide-container" id="slide12">
+    <h2 class="slide-title">Statistics: Beta & Dirichlet</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="two-column">
-            <div>
-                <h3>Random Matrix Theory (RMT)</h3>
-                <p>The Wishart distribution (Matrix Gamma) is central to RMT.</p>
-                <p><strong>The Montgomery-Dyson Pair Correlation:</strong> The zeros of the Riemann Zeta function are distributed identically to the eigenvalues of random unitary matrices.</p>
-                <p>Euler's functions may link AI optimization surfaces to the deepest laws of number theory.</p>
+             <div>
+                <h3>Beta Distribution</h3>
+                <p>Models uncertainty on $[0,1]$.</p>
+                <p>Conjugate prior for Bernoulli/Binomial.</p>
             </div>
-            <div class="image-wrapper" style="background:#fff; padding:10px;">
-                <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Riemann_zeta_function_at_critical_line.svg/800px-Riemann_zeta_function_at_critical_line.svg.png" alt="Riemann Zeta Zeros">
+            <div>
+                <h3>Dirichlet Distribution</h3>
+                <p>Generalizes Beta to $K$ categories.</p>
+                <p>Used for LDA topic priors.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Slide 32: The Decade Ahead -->
-<div class="slide-container" id="slide32">
-    <h2 class="slide-title">The Decade Ahead</h2>
+<!-- Slide 13: Matrix-Variate Generalization -->
+<div class="slide-container" id="slide13">
+    <h2 class="slide-title">Matrix-Variate Generalization</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
         <div class="tiled-content">
             <div class="tile">
-                <div class="icon"><i class="fa-solid fa-project-diagram"></i></div>
-                <h3>Causality</h3>
-                <p>Using Gamma priors to discover Causal Diagrams (Pearl's Ladder).</p>
+                <h3>Matrix Gamma</h3>
+                <p>Multivariate Gamma $\Gamma_p(\cdot)$</p>
+                <p>Matrix analogues of scalar functions.</p>
             </div>
             <div class="tile">
-                 <div class="icon"><i class="fa-solid fa-brain"></i></div>
-                <h3>Neuro-Symbolic</h3>
-                <p>AI that can reason symbolically using continuous relaxations (Beta/Gamma).</p>
+                <h3>Application</h3>
+                <p>Allow priors over covariance matrices (positive-definite matrices).</p>
             </div>
-             <div class="tile">
-                <div class="icon"><i class="fa-solid fa-flask"></i></div>
-                <h3>Automated Science</h3>
-                <p>AI discovering new physics laws using invariant functions.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: Wishart / Inverse-Wishart -->
+<div class="slide-container" id="slide14">
+    <h2 class="slide-title">Wishart / Inverse-Wishart</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div>
+                <h3>Definitions</h3>
+                <p><strong>Wishart:</strong> Distribution over positive-definite matrices (covariance).</p>
+                <p><strong>Inverse-Wishart:</strong> Common conjugate prior.</p>
+            </div>
+             <div class="tile" style="text-align: left;">
+                <h3>Notation</h3>
+                <div style="text-align:center; margin-bottom:20px;">$$\mathcal{W}(V, \nu)$$</div>
+                <p>Used for learning covariance structure in data.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 15: Time Scales & q-Calculus -->
+<div class="slide-container" id="slide15">
+    <h2 class="slide-title">Modern Generalizations</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column tiled">
+            <div>
+                <h3>Time Scales Calculus</h3>
+                <p>Unifies discrete and continuous analysis.</p>
+                <p>Time-scales Gamma has been studied.</p>
+            </div>
+            <div>
+                <h3>q-Calculus</h3>
+                <p>Deformation parameter $q$.</p>
+                <p>Uniqueness questions remain active research.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: The AI Problem -->
+<div class="slide-container" id="slide16">
+    <div class="section-title-layout">
+        <hr>
+        <h2>The AI Problem: "Confidently Wrong"</h2>
+        <p>Standard deep nets output point estimates and can be overconfident on Out-of-Distribution (OOD) data.</p>
+        <p>We need models that quantify <strong>epistemic</strong> vs <strong>aleatoric</strong> uncertainty.</p>
+    </div>
+</div>
+
+<!-- Slide 17: Bayesian Neural Networks (BNNs) -->
+<div class="slide-container" id="slide17">
+    <h2 class="slide-title">Bayesian Neural Networks (BNNs)</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+             <div>
+                <h3>Concept</h3>
+                <p>BNNs place distributions over weights.</p>
+                <p>This allows uncertainty propagation through the model.</p>
+            </div>
+            <div class="image-wrapper" style="background:#fff;">
+                 <svg viewBox="0 0 200 150" width="100%" height="100%">
+                    <circle cx="30" cy="40" r="10" fill="#38bdf8" />
+                    <circle cx="30" cy="110" r="10" fill="#38bdf8" />
+                    <circle cx="100" cy="40" r="10" fill="#fbbf24" />
+                    <circle cx="100" cy="80" r="10" fill="#fbbf24" />
+                    <circle cx="100" cy="120" r="10" fill="#fbbf24" />
+                    <circle cx="170" cy="75" r="10" fill="#ef4444" />
+                    <line x1="30" y1="40" x2="100" y2="80" stroke="#ccc" stroke-width="1"/>
+                    <line x1="100" y1="80" x2="170" y2="75" stroke="#ccc" stroke-width="1"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 18: Matrix-Variate Priors for BNNs -->
+<div class="slide-container" id="slide18">
+    <h2 class="slide-title">Matrix-Variate Priors for BNNs</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+             <div>
+                <h3>Strategy</h3>
+                <p>Use a <strong>Wishart / Matrix-Gamma</strong> prior on the covariance of weight matrices.</p>
+                <p>Result: The network learns correlations between weights.</p>
+            </div>
+            <div class="image-wrapper" style="background:#fff; border:none; justify-content:center;">
+                <div class="heatmap">
+                     <div class="cell high"></div><div class="cell low"></div><div class="cell low"></div><div class="cell med"></div><div class="cell low"></div>
+                     <div class="cell low"></div><div class="cell high"></div><div class="cell med"></div><div class="cell low"></div><div class="cell low"></div>
+                     <div class="cell low"></div><div class="cell med"></div><div class="cell high"></div><div class="cell low"></div><div class="cell low"></div>
+                     <div class="cell med"></div><div class="cell low"></div><div class="cell low"></div><div class="cell high"></div><div class="cell med"></div>
+                     <div class="cell low"></div><div class="cell low"></div><div class="cell low"></div><div class="cell med"></div><div class="cell high"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 19: Practical Payoff -->
+<div class="slide-container" id="slide19">
+    <h2 class="slide-title">Practical Payoff</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-dice"></i></div>
+                <h3>Aleatoric Uncertainty</h3>
+                <p>Data noise (Irreducible).</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-book-open"></i></div>
+                <h3>Epistemic Uncertainty</h3>
+                <p>Model ignorance (Reducible).</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-robot"></i></div>
+                <h3>Result</h3>
+                <p>Enables the AI to say <strong>"I don't know."</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 20: Case Study 1: Bayesian A/B Testing -->
+<div class="slide-container" id="slide20">
+    <h2 class="slide-title">Case Study 1: Bayesian A/B Testing</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div>
+                <h3>Data & Posteriors</h3>
+                <p><strong>A:</strong> 100 clicks / 1000 views</p>
+                <p><strong>B:</strong> 120 clicks / 1000 views</p>
+                <div style="font-size:18px;">
+                    $$\theta_A \sim \text{Beta}(101, 901)$$
+                    $$\theta_B \sim \text{Beta}(121, 881)$$
+                </div>
+                <p>Method: Simulate posteriors to compute $P(\theta_B > \theta_A)$.</p>
+            </div>
+            <div class="bar-chart-container" style="justify-content:center;">
+                <div class="bar-row">
+                    <div class="bar-label">A (10%)</div>
+                    <div class="bar-track"><div class="bar-fill" style="width: 45%;"></div></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">B (12%)</div>
+                    <div class="bar-track"><div class="bar-fill" style="width: 55%; background: linear-gradient(90deg, #b45309, #d97706);"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 21: Case Study 2: Finance -->
+<div class="slide-container" id="slide21">
+    <h2 class="slide-title">Case Study 2: Covariance in Finance</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div>
+                <h3>The Problem</h3>
+                <p>Raw data is noisy.</p>
+            </div>
+            <div>
+                <h3>The Solution</h3>
+                <p>Use <strong>Inverse-Wishart priors</strong> to regularize estimated covariance matrices.</p>
+                <p>Prevents portfolio collapse when data is scarce or volatile.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 22: Case Study 3: Medical Diagnosis -->
+<div class="slide-container bleed-image-layout" id="slide22">
+    <div class="content-container">
+        <h2 class="slide-title">Case Study 3: Medical Diagnosis</h2>
+        <div class="content-area">
+            <h3>The Problem: "Black Box" AI</h3>
+            <ul>
+                <li>Standard AI is <strong>Overconfident</strong>.</li>
+                <li>Fails to measure <strong>Uncertainty</strong>.</li>
+            </ul>
+            <p style="color:#dc2626; margin-top:20px; font-weight:bold;">Dangerous for high-stakes decisions.</p>
+        </div>
+    </div>
+    <div class="image-container" style="background:#f8fafc; display:flex; justify-content:center; align-items:center;">
+        <i class="fa-solid fa-user-doctor" style="font-size:120px; color:#1e3a8a;"></i>
+    </div>
+</div>
+
+<!-- Slide 23: The Solution: BNNs -->
+<div class="slide-container" id="slide23">
+    <h2 class="slide-title">The Solution: BNNs</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column tiled">
+            <div>
+                <h3>Standard AI</h3>
+                <p>Learns <strong>Single Point Estimates</strong> for weights.</p>
+                <p>Output: "This is Cancer (99%)."</p>
+            </div>
+            <div>
+                <h3>Bayesian Neural Network</h3>
+                <p>Learns <strong>Probability Distributions</strong> for weights.</p>
+                <p>Output: "This is likely Cancer, but uncertainty is High."</p>
+                <p style="color:var(--accent-secondary);">Matrix-variate priors (Wishart) allow learning of correlations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 24: Simulation Methodology -->
+<div class="slide-container" id="slide24">
+    <h2 class="slide-title">Simulation Methodology</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon">1</div>
+                <h3>Data Generation</h3>
+                <p>Generate 2 patient groups (Healthy vs Disease) with correlated features.</p>
+            </div>
+            <div class="tile">
+                <div class="icon">2</div>
+                <h3>Inference</h3>
+                <p>Calculate likelihood using Multivariate Normal PDF.</p>
+            </div>
+            <div class="tile">
+                <div class="icon">3</div>
+                <h3>Uncertainty</h3>
+                <p>Use <strong>Mahalanobis Distance</strong> to detect Out-of-Distribution (OOD) patients.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 25: Mahalanobis Distance -->
+<div class="slide-container" id="slide25">
+    <h2 class="slide-title">Mahalanobis Distance</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div>
+                <h3>Definition</h3>
+                <div style="margin:20px 0;">
+                    $$D_M(x) = \sqrt{(x-\mu)^T \Sigma^{-1} (x-\mu)}$$
+                </div>
+                <p>Accounts for covariance.</p>
+                <p>Better at detecting anomalous combinations than Euclidean distance.</p>
+            </div>
+            <div class="image-wrapper" style="background:var(--card-bg); border:1px solid var(--border-color);">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <ellipse cx="100" cy="100" rx="60" ry="30" fill="rgba(30, 58, 138, 0.1)" stroke="#1e3a8a" transform="rotate(-30, 100, 100)"/>
+                    <circle cx="100" cy="100" r="3" fill="#1e3a8a"/>
+                    <circle cx="160" cy="40" r="5" fill="#ef4444"/>
+                    <line x1="100" y1="100" x2="160" y2="40" stroke="#b45309" stroke-dasharray="4"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 26: Results Visualization -->
+<div class="slide-container" id="slide26">
+    <h2 class="slide-title">Results: Trustworthy Output</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div style="background:#fff; border:1px solid #ccc; padding:20px; border-radius:8px;">
+                <h3 style="color:#16a34a; margin-top:0;">Patient A (Typical)</h3>
+                <p><strong>Genetics:</strong> Low Risk</p>
+                <p><strong>Prediction:</strong> 92% Healthy</p>
+                <p><strong>Interval:</strong> [88% - 95%]</p>
+                <p style="font-weight:bold;">High Confidence</p>
+            </div>
+            <div style="background:#fff; border:1px solid #ccc; padding:20px; border-radius:8px;">
+                <h3 style="color:#dc2626; margin-top:0;">Patient B (Anomaly)</h3>
+                <p><strong>Genetics:</strong> High Risk / <strong>Scan:</strong> Normal</p>
+                <p><strong>Prediction:</strong> 70% Disease</p>
+                <p><strong>Interval:</strong> <span style="background:#fee2e2;">[40% - 90%]</span></p>
+                <p style="font-weight:bold;">Low Confidence (Uncertain)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 27: Implementation & Practicalities -->
+<div class="slide-container" id="slide27">
+    <h2 class="slide-title">Implementation & Practicalities</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column tiled">
+            <div>
+                <h3>Challenge</h3>
+                <p>Matrix priors are powerful but computationally heavy.</p>
+            </div>
+            <div>
+                <h3>Solution</h3>
+                <p>Need <strong>VI</strong> (Variational Inference) or <strong>MCMC</strong> approximations.</p>
+                <p>The reparameterization trick helps VI.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 28: Information Geometry -->
+<div class="slide-container" id="slide28">
+    <h2 class="slide-title">Information Geometry</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div>
+                <h3>Manifold of Distributions</h3>
+                <p>Polygamma and Fisher information shape the manifold.</p>
+                <p>Geometry informs optimization & uncertainty.</p>
+            </div>
+            <div class="image-wrapper" style="background:#fff;">
+                 <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <circle cx="100" cy="100" r="90" fill="none" stroke="#333" stroke-width="2"/>
+                    <path d="M 20 100 Q 100 20 180 100" fill="none" stroke="#ef4444" stroke-width="2"/>
+                    <path d="M 100 20 L 100 180" fill="none" stroke="#38bdf8" stroke-width="2"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 29: RMT & Number Theory -->
+<div class="slide-container" id="slide29">
+    <h2 class="slide-title">RMT & Number Theory</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div>
+                <h3>Frontier</h3>
+                <p>Links between Wishart ensembles (RMT) and zero distributions (Riemann zeta) hint at deep cross-disciplinary insights.</p>
+            </div>
+            <div class="image-wrapper" style="background:#fff;">
+                <svg viewBox="0 0 300 200" width="100%" height="100%">
+                    <line x1="150" y1="10" x2="150" y2="190" stroke="#ccc" stroke-width="1"/>
+                    <line x1="200" y1="10" x2="200" y2="190" stroke="#b45309" stroke-width="2"/>
+                    <text x="210" y="20" font-size="10" fill="#b45309">Critical Line</text>
+                    <circle cx="200" cy="50" r="4" fill="#1e3a8a"/>
+                    <circle cx="200" cy="150" r="4" fill="#1e3a8a"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 30: Open Problems -->
+<div class="slide-container" id="slide30">
+    <h2 class="slide-title">Open Problems</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-question"></i></div>
+                <h3>Bohr-Mollerup Analogue</h3>
+                <p>Existence and uniqueness on time scales.</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-link"></i></div>
+                <h3>Integration</h3>
+                <p>Deeper integration of RMT, matrix-variates, and AI priors.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 31: Acknowledgements -->
+<div class="slide-container" id="slide31">
+    <h2 class="slide-title">Acknowledgements</h2>
+    <div class="content-area" style="flex-grow:1; display:flex; justify-content:center; align-items:center;">
+        <div class="ack-grid">
+            <div class="ack-section">
+                <h4>Supervisor</h4>
+                <p>Dr. Aung Sis Naing (Colorado State University)</p>
+            </div>
+            <div class="ack-section">
+                <h4>Academic Support</h4>
+                <p>K.Z (Research Methodology)</p>
+                <p>Su (Student Services)</p>
+                <p>Angeline (Thesis Coordinator)</p>
+            </div>
+            <div class="ack-section">
+                <h4>Consortium Partners</h4>
+                <p>MHEC, Lund University, VFU, UYUIC</p>
+                <p>Northern Illinois University, University of Montana</p>
+                <p>University of Toronto, Yale University</p>
+                <p>Palacký University Olomouc</p>
+            </div>
+            <div class="ack-section">
+                <h4>Personal</h4>
+                <p>My Parents and Teachers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 32: Key Takeaways -->
+<div class="slide-container" id="slide32">
+    <h2 class="slide-title">Key Takeaways</h2>
+    <div class="content-area" style="flex-grow:1; display:flex;">
+        <div class="two-column">
+            <div class="tile">
+                <h3>Fundamental</h3>
+                <p>Euler's Gamma & Beta remain fundamental — from factorial interpolation to AI priors.</p>
+            </div>
+            <div class="tile">
+                <h3>Trustworthy</h3>
+                <p>Matrix-variate generalizations give us tools for trustworthy uncertainty quantification.</p>
             </div>
         </div>
     </div>
@@ -896,40 +995,116 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
 
 <!-- Slide 33: References -->
 <div class="slide-container" id="slide33">
-    <h2 class="slide-title">Key References</h2>
+    <h2 class="slide-title">References</h2>
     <div class="content-area" style="flex-grow:1; overflow-y: auto;">
-        <ul style="font-size: 18px; line-height: 1.8;">
-            <li>Euler, L. (1729). <em>De progressionibus transcendentibus seu quarum termini generales algebraice dari nequeunt</em>.</li>
-            <li>Davis, P. J. (1959). <em>Leonhard Euler's Integral: A Historical Profile of the Gamma Function</em>.</li>
-            <li>Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). <em>Latent Dirichlet Allocation</em>. Journal of Machine Learning Research.</li>
-            <li>Bishop, C. M. (2006). <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
-            <li>MacKay, D. J. C. (2003). <em>Information Theory, Inference and Learning Algorithms</em>. Cambridge University Press.</li>
-            <li>Amari, S. (2016). <em>Information Geometry and Its Applications</em>. Springer.</li>
-            <li>Neal, R. M. (1996). <em>Bayesian Learning for Neural Networks</em>. Springer.</li>
+        <ul style="font-size: 20px; line-height: 1.8;">
+            <li>Davis (1959): Historical profile of Gamma.</li>
+            <li>Bohr & Mollerup (1922): Uniqueness theorem.</li>
+            <li>Blei et al. (2003): Latent Dirichlet Allocation (LDA).</li>
+            <li><strong>Appendix B:</strong> Full Python code listings for case studies.</li>
         </ul>
     </div>
 </div>
 
-<!-- Slide 34: Conclusion -->
+<!-- Slide 34: Q&A -->
 <div class="slide-container" id="slide34">
     <div class="title-layout">
-        <h1>An Unfinished Symphony</h1>
-        <p class="subtitle">"Read Euler, read Euler, he is the master of us all."<br>- Pierre-Simon Laplace</p>
-        <div style="margin-top:40px; border-top: 1px solid var(--accent-secondary); width: 200px; margin-left: auto; margin-right: auto;"></div>
-        <p style="text-align:center; margin-top:20px;">The journey from 1729 to 2025 is just the beginning.</p>
+        <h1>Q & A</h1>
+        <p class="subtitle">Thank you for your attention.</p>
+        <p style="margin-top:20px;">Happy to explain any equation or the simulation code.</p>
     </div>
 </div>
 
-<!-- Slide 35: Q&A -->
-<div class="slide-container" id="slide35">
-    <div class="qa-layout">
-        <h2>Questions?</h2>
-        <p>Thank you for your attention.</p>
-        <div class="contact-info">
-            waiyantunoo.mm@gmail.com | ID: CAP25_01_1612
-        </div>
-    </div>
-</div>
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide-container');
+    const counter = document.getElementById('slide-counter');
+    const navButtons = document.getElementById('nav-buttons');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const presentBtn = document.getElementById('present-btn');
+
+    function togglePresentMode() {
+        document.body.classList.toggle('present-mode');
+        const elem = document.documentElement; 
+        
+        if (document.body.classList.contains('present-mode')) {
+            showSlide(currentSlide);
+            navButtons.style.display = 'flex';
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            presentBtn.innerHTML = '<i class="fa-solid fa-compress"></i> Exit';
+            
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => console.log("Fullscreen blocked"));
+            } else if (elem.webkitRequestFullscreen) { 
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { 
+                elem.msRequestFullscreen();
+            }
+        } else {
+            slides.forEach(s => {
+                s.classList.remove('active');
+                s.style.transform = '';
+            });
+            navButtons.style.display = 'none';
+            presentBtn.innerHTML = '<i class="fa-solid fa-play"></i> Present';
+            
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => {});
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+
+    function showSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+        
+        slides.forEach((s, i) => {
+            if (i === index) {
+                s.classList.add('active');
+                const scaleX = window.innerWidth / 1280;
+                const scaleY = window.innerHeight / 720;
+                const scale = Math.min(scaleX, scaleY);
+                s.style.transform = `scale(${scale * 0.95})`; 
+            } else {
+                s.classList.remove('active');
+            }
+        });
+        currentSlide = index;
+        if (counter) counter.innerText = `Slide ${currentSlide + 1} / ${slides.length}`;
+    }
+
+    function changeSlide(dir) {
+        showSlide(currentSlide + dir);
+    }
+
+    window.addEventListener('resize', () => {
+        if (document.body.classList.contains('present-mode')) {
+            showSlide(currentSlide); 
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (!document.body.classList.contains('present-mode')) return;
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+        if (e.key === 'Escape') togglePresentMode();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+    document.addEventListener('touchend', e => {
+        if (!document.body.classList.contains('present-mode')) return;
+        const touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 50) changeSlide(1);
+        if (touchEndX - touchStartX > 50) changeSlide(-1);
+    });
+</script>
 
 </body>
 </html>
