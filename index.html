@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- MATHJAX CONFIGURATION (SVG for perfect sharpness) -->
     <script>
     window.MathJax = {
       loader: { load: ['[tex]/ams'] },
@@ -277,7 +276,7 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
 </head>
 <body>
 
-<div class="controls">
+<div class="controls" id="nav-buttons">
     <button class="btn" id="prev-btn" style="display:none;" onclick="changeSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
     <div class="slide-counter" id="slide-counter">1 / 34</div>
     <button class="btn" id="next-btn" style="display:none;" onclick="changeSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
@@ -285,12 +284,10 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     <button class="btn" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
 </div>
 
-<!-- Slide 1: Title -->
 <div class="slide-container active" id="slide1">
     <div class="title-layout">
         <div style="display:flex; justify-content:center; margin-bottom:30px;">
             <div style="width:150px; height:150px; border-radius:50%; overflow:hidden; border: 4px solid var(--accent-primary); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <!-- Stable Wikimedia Link -->
                 <img referrerpolicy="no-referrer" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Leonhard_Euler.jpg/800px-Leonhard_Euler.jpg" alt="Portrait of Leonhard Euler" style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -300,7 +297,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 2: The Factorial Dilemma -->
 <div class="slide-container" id="slide2">
     <h2 class="slide-title">The Factorial Dilemma (1720s)</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -316,7 +312,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 <p>Euler's answer: Build a smooth interpolation — the Gamma function.</p>
             </div>
             <div class="image-wrapper" style="background:#fff;">
-                <!-- Native SVG for Gamma Function Interpolation -->
                 <svg viewBox="0 0 400 300" width="100%" height="100%">
                     <line x1="50" y1="250" x2="350" y2="250" stroke="#333" stroke-width="2"/>
                     <line x1="50" y1="50" x2="50" y2="250" stroke="#333" stroke-width="2"/>
@@ -333,7 +328,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 3: Euler's Resolution -->
 <div class="slide-container" id="slide3">
     <h2 class="slide-title">Euler's Resolution</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -357,7 +351,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 4: Analytic Continuation -->
 <div class="slide-container" id="slide4">
     <h2 class="slide-title">Analytic Continuation</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -371,6 +364,11 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
             </div>
             <div class="image-wrapper" style="background:#fff;">
                 <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" />
+                        </marker>
+                    </defs>
                     <line x1="20" y1="100" x2="180" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
                     <line x1="100" y1="20" x2="100" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
                     <text x="170" y="90" font-size="12">Re</text>
@@ -390,7 +388,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 5: The Beta Function -->
 <div class="slide-container" id="slide5">
     <h2 class="slide-title">The Beta Function</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -413,7 +410,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 6: The Master Identity -->
 <div class="slide-container" id="slide6">
     <h2 class="slide-title">The Master Identity</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -433,7 +429,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 7: Bohr-Mollerup Theorem -->
 <div class="slide-container" id="slide7">
     <h2 class="slide-title">Bohr-Mollerup: Why Gamma is unique</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -458,7 +453,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 8: The Classical Atlas -->
 <div class="slide-container" id="slide8">
     <div class="section-title-layout">
         <hr>
@@ -479,7 +473,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 9: Physics: Hypersphere Volume -->
 <div class="slide-container" id="slide9">
     <h2 class="slide-title">Physics: Hypersphere Volume</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -503,7 +496,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 10: Physics: Veneziano Amplitude -->
 <div class="slide-container" id="slide10">
     <h2 class="slide-title">Physics: Veneziano Amplitude</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -527,7 +519,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 11: Statistics: Gamma Distribution -->
 <div class="slide-container" id="slide11">
     <h2 class="slide-title">Statistics: Gamma Distribution</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -551,7 +542,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 12: Statistics: Beta & Dirichlet -->
 <div class="slide-container" id="slide12">
     <h2 class="slide-title">Statistics: Beta & Dirichlet</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -570,7 +560,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 13: Matrix-Variate Generalization -->
 <div class="slide-container" id="slide13">
     <h2 class="slide-title">Matrix-Variate Generalization</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -588,7 +577,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 14: Wishart / Inverse-Wishart -->
 <div class="slide-container" id="slide14">
     <h2 class="slide-title">Wishart / Inverse-Wishart</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -607,7 +595,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 15: Time Scales & q-Calculus -->
 <div class="slide-container" id="slide15">
     <h2 class="slide-title">Modern Generalizations</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -626,7 +613,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 16: The AI Problem -->
 <div class="slide-container" id="slide16">
     <div class="section-title-layout">
         <hr>
@@ -636,7 +622,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 17: Bayesian Neural Networks (BNNs) -->
 <div class="slide-container" id="slide17">
     <h2 class="slide-title">Bayesian Neural Networks (BNNs)</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -662,7 +647,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 18: Matrix-Variate Priors for BNNs -->
 <div class="slide-container" id="slide18">
     <h2 class="slide-title">Matrix-Variate Priors for BNNs</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -685,7 +669,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 19: Practical Payoff -->
 <div class="slide-container" id="slide19">
     <h2 class="slide-title">Practical Payoff</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -709,7 +692,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 20: Case Study 1: Bayesian A/B Testing -->
 <div class="slide-container" id="slide20">
     <h2 class="slide-title">Case Study 1: Bayesian A/B Testing</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -738,7 +720,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 21: Case Study 2: Finance -->
 <div class="slide-container" id="slide21">
     <h2 class="slide-title">Case Study 2: Covariance in Finance</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -756,7 +737,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 22: Case Study 3: Medical Diagnosis -->
 <div class="slide-container bleed-image-layout" id="slide22">
     <div class="content-container">
         <h2 class="slide-title">Case Study 3: Medical Diagnosis</h2>
@@ -774,7 +754,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 23: The Solution: BNNs -->
 <div class="slide-container" id="slide23">
     <h2 class="slide-title">The Solution: BNNs</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -794,7 +773,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 24: Simulation Methodology -->
 <div class="slide-container" id="slide24">
     <h2 class="slide-title">Simulation Methodology</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -818,7 +796,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 25: Mahalanobis Distance -->
 <div class="slide-container" id="slide25">
     <h2 class="slide-title">Mahalanobis Distance</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -843,7 +820,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 26: Results Visualization -->
 <div class="slide-container" id="slide26">
     <h2 class="slide-title">Results: Trustworthy Output</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -866,7 +842,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 27: Implementation & Practicalities -->
 <div class="slide-container" id="slide27">
     <h2 class="slide-title">Implementation & Practicalities</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -884,7 +859,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 28: Information Geometry -->
 <div class="slide-container" id="slide28">
     <h2 class="slide-title">Information Geometry</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -905,7 +879,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 29: RMT & Number Theory -->
 <div class="slide-container" id="slide29">
     <h2 class="slide-title">RMT & Number Theory</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -927,7 +900,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 30: Open Problems -->
 <div class="slide-container" id="slide30">
     <h2 class="slide-title">Open Problems</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -946,7 +918,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 31: Acknowledgements -->
 <div class="slide-container" id="slide31">
     <h2 class="slide-title">Acknowledgements</h2>
     <div class="content-area" style="flex-grow:1; display:flex; justify-content:center; align-items:center;">
@@ -976,7 +947,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 32: Key Takeaways -->
 <div class="slide-container" id="slide32">
     <h2 class="slide-title">Key Takeaways</h2>
     <div class="content-area" style="flex-grow:1; display:flex;">
@@ -993,7 +963,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 33: References -->
 <div class="slide-container" id="slide33">
     <h2 class="slide-title">References</h2>
     <div class="content-area" style="flex-grow:1; overflow-y: auto;">
@@ -1006,7 +975,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     </div>
 </div>
 
-<!-- Slide 34: Q&A -->
 <div class="slide-container" id="slide34">
     <div class="title-layout">
         <h1>Q & A</h1>
@@ -1019,7 +987,8 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide-container');
     const counter = document.getElementById('slide-counter');
-    const navButtons = document.getElementById('nav-buttons');
+    // Corrected Selector using the ID added above
+    const navButtons = document.getElementById('nav-buttons'); 
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const presentBtn = document.getElementById('present-btn');
@@ -1047,7 +1016,12 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 s.classList.remove('active');
                 s.style.transform = '';
             });
-            navButtons.style.display = 'none';
+            navButtons.style.display = 'none'; // Reverts to CSS default or specific logic
+            // Actually in CSS .controls is flex, buttons inside are hidden. 
+            // Better to just hide the prev/next buttons
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
             presentBtn.innerHTML = '<i class="fa-solid fa-play"></i> Present';
             
             if (document.exitFullscreen) {
@@ -1108,4 +1082,3 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
 
 </body>
 </html>
-```
