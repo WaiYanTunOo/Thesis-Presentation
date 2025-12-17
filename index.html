@@ -305,6 +305,8 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 <h3>Bridging the Gap</h3>
                 <p><strong>Problem:</strong> Factorial $n!$ is defined only for integers.</p>
                 <ul>
+                    <li>$1! = 1$</li>
+                    <li>$2! = 2$</li>
                     <li>$3! = 6$</li>
                     <li>$4! = 24$</li>
                 </ul>
@@ -312,16 +314,30 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 <p>Euler's answer: Build a smooth interpolation — the Gamma function.</p>
             </div>
             <div class="image-wrapper" style="background:#fff;">
-                <svg viewBox="0 0 400 300" width="100%" height="100%">
-                    <line x1="50" y1="250" x2="350" y2="250" stroke="#333" stroke-width="2"/>
-                    <line x1="50" y1="50" x2="50" y2="250" stroke="#333" stroke-width="2"/>
-                    <path d="M 50 240 Q 150 240 300 50" fill="none" stroke="#1e3a8a" stroke-width="4"/>
-                    <circle cx="100" cy="220" r="6" fill="#b45309"/> 
-                    <circle cx="150" cy="180" r="6" fill="#b45309"/> 
-                    <circle cx="200" cy="120" r="6" fill="#b45309"/> 
-                    <circle cx="175" cy="150" r="6" fill="#ef4444"/> 
-                    <text x="185" y="155" font-family="Arial" font-size="14" fill="#ef4444" font-weight="bold">2.5!</text>
-                    <text x="250" y="80" font-family="Arial" font-size="14" font-weight="bold" fill="#1e3a8a">y = &Gamma;(x+1)</text>
+                
+                <svg viewBox="0 0 500 400" width="100%" height="100%">
+                    <defs>
+                        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#f0f0f0" stroke-width="1"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                    
+                    <line x1="50" y1="350" x2="450" y2="350" stroke="#333" stroke-width="2"/>
+                    <line x1="50" y1="50" x2="50" y2="350" stroke="#333" stroke-width="2"/>
+                    
+                    <text x="440" y="380" font-family="Arial" font-size="14">x</text>
+                    <text x="20" y="60" font-family="Arial" font-size="14">y</text>
+
+                    <path d="M 50 340 
+                             C 100 340, 120 330, 150 290 
+                             S 210 180, 250 120 
+                             S 300 50, 350 20" 
+                             fill="none" stroke="#1e3a8a" stroke-width="3"/>
+
+                    <circle cx="50" cy="340" r="5" fill="#b45309"/> <circle cx="100" cy="330" r="5" fill="#b45309"/> <circle cx="150" cy="290" r="5" fill="#b45309"/> <circle cx="200" cy="210" r="5" fill="#b45309"/> <circle cx="250" cy="90" r="5" fill="#b45309"/> <circle cx="175" cy="250" r="5" fill="#ef4444"/> <text x="185" y="255" font-family="Arial" font-size="14" fill="#ef4444" font-weight="bold">2.5!</text>
+                    
+                    <text x="280" y="80" font-family="Arial" font-size="16" font-weight="bold" fill="#1e3a8a">y = &Gamma;(x+1)</text>
                 </svg>
             </div>
         </div>
@@ -632,15 +648,36 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 <p>This allows uncertainty propagation through the model.</p>
             </div>
             <div class="image-wrapper" style="background:#fff;">
-                 <svg viewBox="0 0 200 150" width="100%" height="100%">
-                    <circle cx="30" cy="40" r="10" fill="#38bdf8" />
-                    <circle cx="30" cy="110" r="10" fill="#38bdf8" />
-                    <circle cx="100" cy="40" r="10" fill="#fbbf24" />
-                    <circle cx="100" cy="80" r="10" fill="#fbbf24" />
-                    <circle cx="100" cy="120" r="10" fill="#fbbf24" />
-                    <circle cx="170" cy="75" r="10" fill="#ef4444" />
-                    <line x1="30" y1="40" x2="100" y2="80" stroke="#ccc" stroke-width="1"/>
-                    <line x1="100" y1="80" x2="170" y2="75" stroke="#ccc" stroke-width="1"/>
+                 
+                 <svg viewBox="0 0 300 200" width="100%" height="100%">
+                    <circle cx="50" cy="50" r="10" fill="#38bdf8" stroke="#333"/>
+                    <circle cx="50" cy="150" r="10" fill="#38bdf8" stroke="#333"/>
+                    
+                    <g transform="translate(150, 50)">
+                        <path d="M -10 0 Q 0 -15 10 0" fill="none" stroke="#b45309" stroke-width="2"/>
+                        <circle cx="0" cy="0" r="15" fill="none" stroke="#b45309" stroke-dasharray="2,2"/>
+                    </g>
+                    <g transform="translate(150, 100)">
+                        <path d="M -10 0 Q 0 -15 10 0" fill="none" stroke="#b45309" stroke-width="2"/>
+                        <circle cx="0" cy="0" r="15" fill="none" stroke="#b45309" stroke-dasharray="2,2"/>
+                    </g>
+                    <g transform="translate(150, 150)">
+                        <path d="M -10 0 Q 0 -15 10 0" fill="none" stroke="#b45309" stroke-width="2"/>
+                        <circle cx="0" cy="0" r="15" fill="none" stroke="#b45309" stroke-dasharray="2,2"/>
+                    </g>
+
+                    <circle cx="250" cy="100" r="10" fill="#ef4444" stroke="#333"/>
+
+                    <line x1="60" y1="50" x2="135" y2="50" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="60" y1="50" x2="135" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="60" y1="150" x2="135" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="60" y1="150" x2="135" y2="150" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    
+                    <line x1="165" y1="50" x2="240" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="165" y1="100" x2="240" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="165" y1="150" x2="240" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="4"/>
+                    
+                    <text x="130" y="190" font-size="12" fill="#b45309">P(w) ~ Normal</text>
                 </svg>
             </div>
         </div>
@@ -657,13 +694,36 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 <p>Result: The network learns correlations between weights.</p>
             </div>
             <div class="image-wrapper" style="background:#fff; border:none; justify-content:center;">
-                <div class="heatmap">
-                     <div class="cell high"></div><div class="cell low"></div><div class="cell low"></div><div class="cell med"></div><div class="cell low"></div>
-                     <div class="cell low"></div><div class="cell high"></div><div class="cell med"></div><div class="cell low"></div><div class="cell low"></div>
-                     <div class="cell low"></div><div class="cell med"></div><div class="cell high"></div><div class="cell low"></div><div class="cell low"></div>
-                     <div class="cell med"></div><div class="cell low"></div><div class="cell low"></div><div class="cell high"></div><div class="cell med"></div>
-                     <div class="cell low"></div><div class="cell low"></div><div class="cell low"></div><div class="cell med"></div><div class="cell high"></div>
-                </div>
+                
+                <svg viewBox="0 0 300 300" width="100%" height="100%">
+                    <rect x="0" y="0" width="300" height="300" fill="#f8fafc"/>
+                    <g transform="translate(25,25)">
+                        <rect x="0" y="0" width="50" height="50" fill="#1e3a8a"/> <rect x="50" y="0" width="50" height="50" fill="#93c5fd"/> <rect x="100" y="0" width="50" height="50" fill="#bfdbfe"/> <rect x="150" y="0" width="50" height="50" fill="#1e3a8a"/> <rect x="200" y="0" width="50" height="50" fill="#e2e8f0"/> <rect x="0" y="50" width="50" height="50" fill="#93c5fd"/>
+                        <rect x="50" y="50" width="50" height="50" fill="#1e3a8a"/>
+                        <rect x="100" y="50" width="50" height="50" fill="#60a5fa"/>
+                        <rect x="150" y="50" width="50" height="50" fill="#bfdbfe"/>
+                        <rect x="200" y="50" width="50" height="50" fill="#e2e8f0"/>
+
+                         <rect x="0" y="100" width="50" height="50" fill="#bfdbfe"/>
+                        <rect x="50" y="100" width="50" height="50" fill="#60a5fa"/>
+                        <rect x="100" y="100" width="50" height="50" fill="#1e3a8a"/>
+                        <rect x="150" y="100" width="50" height="50" fill="#e2e8f0"/>
+                        <rect x="200" y="100" width="50" height="50" fill="#93c5fd"/>
+                        
+                         <rect x="0" y="150" width="50" height="50" fill="#1e3a8a"/>
+                        <rect x="50" y="150" width="50" height="50" fill="#bfdbfe"/>
+                        <rect x="100" y="150" width="50" height="50" fill="#e2e8f0"/>
+                        <rect x="150" y="150" width="50" height="50" fill="#1e3a8a"/>
+                        <rect x="200" y="150" width="50" height="50" fill="#60a5fa"/>
+
+                        <rect x="0" y="200" width="50" height="50" fill="#e2e8f0"/>
+                        <rect x="50" y="200" width="50" height="50" fill="#e2e8f0"/>
+                        <rect x="100" y="200" width="50" height="50" fill="#93c5fd"/>
+                        <rect x="150" y="200" width="50" height="50" fill="#60a5fa"/>
+                        <rect x="200" y="200" width="50" height="50" fill="#1e3a8a"/>
+                    </g>
+                    <text x="150" y="290" text-anchor="middle" font-size="14" fill="#64748b">Learned Weight Correlations ($\Sigma$)</text>
+                </svg>
             </div>
         </div>
     </div>
@@ -987,7 +1047,6 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide-container');
     const counter = document.getElementById('slide-counter');
-    // Corrected Selector using the ID added above
     const navButtons = document.getElementById('nav-buttons'); 
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -1016,9 +1075,7 @@ mjx-container { color: #000 !important; font-size: 115% !important; font-weight:
                 s.classList.remove('active');
                 s.style.transform = '';
             });
-            navButtons.style.display = 'none'; // Reverts to CSS default or specific logic
-            // Actually in CSS .controls is flex, buttons inside are hidden. 
-            // Better to just hide the prev/next buttons
+            navButtons.style.display = 'none'; 
             prevBtn.style.display = 'none';
             nextBtn.style.display = 'none';
             
